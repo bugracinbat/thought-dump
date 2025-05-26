@@ -57,11 +57,11 @@
   }
 
   .btn-secondary {
-    @apply bg-gradient-card text-primary-700 hover:shadow-card-hover border border-border-primary backdrop-blur-sm;
+    @apply bg-gradient-card text-primary-700 hover:shadow-card-hover border border-border-primary;
   }
 
   .btn-ghost {
-    @apply hover:bg-primary-100/50 text-primary-600 hover:text-primary-700 backdrop-blur-sm;
+    @apply hover:bg-primary-100/50 text-primary-600 hover:text-primary-700;
   }
 
   .btn-gradient {
@@ -84,7 +84,7 @@
 
   /* Input styles with modern design */
   .input {
-    @apply flex w-full rounded-lg border border-border-primary bg-background-tertiary/50 px-4 py-3 text-sm ring-offset-background-primary file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 backdrop-blur-sm transition-all duration-200;
+    @apply flex w-full rounded-lg border border-border-primary bg-background-tertiary/50 px-4 py-3 text-sm ring-offset-background-primary file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-primary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200;
   }
 
   .input:focus {
@@ -93,15 +93,15 @@
 
   /* Card styles with gradients and glass effect */
   .card {
-    @apply rounded-xl border border-border-primary/50 bg-background-tertiary/80 shadow-card backdrop-blur-sm transition-all duration-300 hover:shadow-card-hover hover:border-border-secondary;
+    @apply rounded-xl border border-border-primary/50 bg-background-tertiary/80 shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-border-secondary;
   }
 
   .card-gradient {
-    @apply rounded-xl border border-border-primary/30 shadow-xl backdrop-blur-md relative overflow-hidden;
+    @apply rounded-xl border border-border-primary/30 shadow-xl relative overflow-hidden;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(248, 250, 252, 0.8) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(248, 250, 252, 0.9) 100%
     );
   }
 
@@ -122,7 +122,7 @@
 
   /* Vote button styles with modern effects */
   .vote-btn {
-    @apply flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 text-primary-500 hover:text-primary-700 hover:bg-primary-100/50 backdrop-blur-sm border border-transparent hover:border-border-primary;
+    @apply flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 text-primary-500 hover:text-primary-700 hover:bg-primary-100/50 border border-transparent hover:border-border-primary;
   }
 
   .vote-btn.active {
@@ -147,7 +147,7 @@
   }
 
   .nav-link:not(.active) {
-    @apply text-primary-600 hover:text-primary-700 hover:bg-primary-100/50 backdrop-blur-sm;
+    @apply text-primary-600 hover:text-primary-700 hover:bg-primary-100/50;
   }
 
   /* Loading spinner with gradient */
@@ -192,7 +192,7 @@
 
   /* Glass morphism effect */
   .glass {
-    @apply bg-background-tertiary/30 backdrop-blur-md border border-border-primary/30;
+    @apply bg-background-tertiary/30 border border-border-primary/30;
   }
 
   /* Floating animation for decorative elements */
@@ -210,28 +210,227 @@
     @apply animate-slide-up;
   }
 
+  /* Scroll-triggered animations */
+  .animate-on-scroll {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-on-scroll.animation-ready:not(.visible) {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Enhanced hover effects */
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+
+  /* Improved button animations */
+  .btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  /* Enhanced card hover effects */
+  .card-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Pulse animation for decorative elements */
+  .animate-pulse-slow {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   /* Topic tag styles */
   .topic-tag {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-card border border-border-primary/50 text-primary-700 hover:shadow-card transition-all duration-200 backdrop-blur-sm;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100/80 text-primary-700 hover:bg-primary-200/80 transition-all duration-200 border border-primary-200/50;
   }
 
   .topic-tag:hover {
-    @apply transform scale-105 border-accent-300;
+    @apply transform scale-105 shadow-sm;
   }
 
   /* Post card enhancements */
   .post-card {
-    @apply card hover:transform hover:scale-[1.02] transition-all duration-300;
+    @apply transition-all duration-300 hover:shadow-card-hover hover:border-border-secondary;
   }
 
-  /* Header with glass effect */
+  /* Header glass effect */
   .header-glass {
-    @apply bg-background-tertiary/80 backdrop-blur-md border-b border-border-primary/50;
+    @apply bg-background-tertiary/90 border-b border-border-primary/30;
   }
 
-  /* Footer with gradient */
+  /* Footer gradient */
   .footer-gradient {
-    @apply bg-gradient-card border-t border-border-primary/50;
+    @apply bg-gradient-card border-t border-border-primary/30;
+  }
+
+  /* Text balance for better typography */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Additional gradient backgrounds */
+  .bg-gradient-mesh {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, #000000 0%, #111111 50%, #000000 100%);
+  }
+
+  .bg-gradient-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+
+  .bg-gradient-accent {
+    background: linear-gradient(135deg, #0070f3 0%, #00d9ff 100%);
+  }
+
+  .bg-gradient-pink {
+    background: linear-gradient(135deg, #ff0080 0%, #7c3aed 100%);
+  }
+
+  .bg-gradient-orange {
+    background: linear-gradient(135deg, #ff6600 0%, #ff0080 100%);
+  }
+
+  /* Testimonial card styles */
+  .testimonial-card {
+    @apply card-gradient p-6 relative group hover:scale-105 transition-transform duration-300;
+  }
+
+  .testimonial-card::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-xl;
+  }
+
+  /* Feature card animations */
+  .feature-card {
+    @apply transition-all duration-500 cursor-pointer group;
+  }
+
+  .feature-card.active {
+    @apply scale-105 shadow-glow;
+  }
+
+  .feature-card:not(.active):hover {
+    @apply scale-102;
+  }
+
+  /* Stats card hover effects */
+  .stats-card {
+    @apply text-center group transition-all duration-300;
+  }
+
+  .stats-card:hover {
+    @apply transform -translate-y-1;
+  }
+
+  /* Enhanced loading states */
+  .loading-container {
+    @apply flex items-center justify-center min-h-[60vh];
+  }
+
+  .loading-content {
+    @apply text-center space-y-4;
+  }
+
+  /* Improved error states */
+  .error-card {
+    @apply card bg-red-50/80 border-red-200 p-6 rounded-xl;
+  }
+
+  .error-indicator {
+    @apply w-2 h-2 bg-red-500 rounded-full;
+  }
+
+  /* CTA section enhancements */
+  .cta-section {
+    @apply text-center py-16 animate-on-scroll slide-up;
+  }
+
+  .cta-content {
+    @apply card-gradient p-12 md:p-16 relative overflow-hidden;
+  }
+
+  .cta-background {
+    @apply absolute inset-0 bg-gradient-mesh opacity-5;
+  }
+
+  /* Responsive text sizing */
+  @media (max-width: 640px) {
+    .text-5xl {
+      font-size: 2.5rem;
+    }
+
+    .text-7xl {
+      font-size: 3.5rem;
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-pulse,
+    .animate-spin,
+    .animate-fade-in,
+    .animate-slide-up {
+      animation: none;
+    }
+
+    .transition-all,
+    .transition-transform,
+    .transition-colors {
+      transition: none;
+    }
+  }
+
+  /* Focus states for better accessibility */
+  .btn:focus-visible,
+  .nav-link:focus-visible {
+    @apply outline-none ring-2 ring-accent-500 ring-offset-2;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .text-gradient,
+    .text-gradient-pink {
+      background: none;
+      -webkit-text-fill-color: unset;
+    }
   }
 }
 
