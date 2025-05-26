@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { MessageSquare, Plus, Settings, Sparkles } from "lucide-react";
+import { SearchBar } from "./SearchBar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,6 +35,11 @@ export function Layout({ children }: LayoutProps) {
               </span>
             </Link>
 
+            {/* Search Bar - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden md:block flex-1 max-w-md mx-8">
+              <SearchBar placeholder="Search..." />
+            </div>
+
             {/* Navigation */}
             <nav className="flex items-center space-x-2">
               <Link
@@ -50,7 +56,7 @@ export function Layout({ children }: LayoutProps) {
                 className="btn btn-primary btn-sm flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>New Post</span>
+                <span className="hidden sm:inline">New Post</span>
               </Link>
 
               <Link
@@ -62,6 +68,11 @@ export function Layout({ children }: LayoutProps) {
                 <Settings className="h-4 w-4" />
               </Link>
             </nav>
+          </div>
+
+          {/* Mobile Search Bar */}
+          <div className="md:hidden pb-4">
+            <SearchBar placeholder="Search posts and topics..." />
           </div>
         </div>
       </header>

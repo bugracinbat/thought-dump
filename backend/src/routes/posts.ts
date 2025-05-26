@@ -69,10 +69,25 @@ router.get("/", async (req, res, next) => {
     }
 
     if (search) {
-      where.content = {
-        contains: search,
-        mode: "insensitive",
-      };
+      where.OR = [
+        {
+          content: {
+            contains: search,
+          },
+        },
+        {
+          authorNickname: {
+            contains: search,
+          },
+        },
+        {
+          topic: {
+            name: {
+              contains: search,
+            },
+          },
+        },
+      ];
     }
 
     // Build order clause
