@@ -15,29 +15,29 @@ export function HomePage() {
     feedType,
     topics,
     topicsLoading,
-    setPosts,
+    setAllPosts,
     setLoading,
     setError,
     setTopics,
     setTopicsLoading,
   } = useStore();
 
-  // Fetch posts
+  // Fetch posts - only run once on mount
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const sortBy = feedType === "trending" ? "trending" : "newest";
-        const response = await fetch(`/api/posts?sortBy=${sortBy}&limit=20`);
+        // Always fetch all posts sorted by newest first
+        const response = await fetch(`/api/posts?sortBy=newest&limit=50`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
 
         const data = await response.json();
-        setPosts(data.posts);
+        setAllPosts(data.posts); // Use setAllPosts instead of setPosts
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -46,7 +46,7 @@ export function HomePage() {
     };
 
     fetchPosts();
-  }, [feedType, setPosts, setLoading, setError]);
+  }, [setAllPosts, setLoading, setError]); // Add proper dependencies
 
   // Fetch topics
   useEffect(() => {

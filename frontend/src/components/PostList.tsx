@@ -9,7 +9,7 @@ interface PostListProps {
 }
 
 export function PostList({ posts }: PostListProps) {
-  const { updatePostVotes } = useStore();
+  const { updatePostVotes, feedType } = useStore();
 
   const handleVote = async (postId: string, type: "upvote" | "downvote") => {
     try {
@@ -52,12 +52,12 @@ export function PostList({ posts }: PostListProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div key={feedType} className="space-y-6 fade-in">
       {posts.map((post, index) => (
         <article
           key={post.id}
           className="post-card p-6 slide-up"
-          style={{ animationDelay: `${index * 0.1}s` }}
+          style={{ animationDelay: `${index * 0.05}s` }}
         >
           <div className="flex space-x-6">
             {/* Vote buttons */}
