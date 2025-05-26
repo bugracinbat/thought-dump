@@ -5,30 +5,32 @@ export function FeedToggle() {
   const { feedType, setFeedType } = useStore();
 
   return (
-    <div className="flex items-center space-x-1 bg-primary-100 rounded-lg p-1">
-      <button
-        onClick={() => setFeedType("chronological")}
-        className={`flex items-center space-x-1 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-          feedType === "chronological"
-            ? "bg-white text-primary-700 shadow-sm"
-            : "text-primary-600 hover:text-primary-700"
-        }`}
-      >
-        <Clock className="h-4 w-4" />
-        <span>Latest</span>
-      </button>
+    <div className="glass rounded-xl p-1 backdrop-blur-md">
+      <div className="flex items-center space-x-1">
+        <button
+          onClick={() => setFeedType("chronological")}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+            feedType === "chronological"
+              ? "bg-gradient-accent text-white shadow-glow transform scale-105"
+              : "text-primary-600 hover:text-primary-700 hover:bg-primary-100/50"
+          }`}
+        >
+          <Clock className="h-4 w-4" />
+          <span>Latest</span>
+        </button>
 
-      <button
-        onClick={() => setFeedType("trending")}
-        className={`flex items-center space-x-1 px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-          feedType === "trending"
-            ? "bg-white text-primary-700 shadow-sm"
-            : "text-primary-600 hover:text-primary-700"
-        }`}
-      >
-        <TrendingUp className="h-4 w-4" />
-        <span>Trending</span>
-      </button>
+        <button
+          onClick={() => setFeedType("trending")}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+            feedType === "trending"
+              ? "bg-gradient-pink text-white shadow-glow transform scale-105"
+              : "text-primary-600 hover:text-primary-700 hover:bg-primary-100/50"
+          }`}
+        >
+          <TrendingUp className="h-4 w-4" />
+          <span>Trending</span>
+        </button>
+      </div>
     </div>
   );
 }

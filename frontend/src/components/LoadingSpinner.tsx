@@ -17,9 +17,14 @@ export function LoadingSpinner({
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
-      <Loader2
-        className={`animate-spin text-primary-500 ${sizeClasses[size]}`}
-      />
+      <div className="relative">
+        <Loader2
+          className={`animate-spin text-accent-500 ${sizeClasses[size]}`}
+        />
+        <div
+          className={`absolute inset-0 ${sizeClasses[size]} rounded-full bg-accent-500/20 animate-pulse`}
+        ></div>
+      </div>
     </div>
   );
 }
