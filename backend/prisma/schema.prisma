@@ -33,16 +33,42 @@ model Post {
   upvotes         Int       @default(0)
   downvotes       Int       @default(0)
   score           Float     @default(0) // Calculated score for trending
+  commentCount    Int       @default(0) // Number of comments
   isModerated     Boolean   @default(false)
   moderatedAt     DateTime?
   moderatedBy     String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  votes Vote[]
+  topic    Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+  comments Comment[]
 
   @@map("posts")
+}
+
+model Comment {
+  id              String    @id @default(cuid())
+  content         String
+  authorNickname  String?   // Anonymous nickname
+  authorId        String?   // Optional for registered users
+  postId          String
+  parentId        String?   // For nested replies (future feature)
+  upvotes         Int       @default(0)
+  downvotes       Int       @default(0)
+  score           Float     @default(0) // Calculated score for sorting
+  isModerated     Boolean   @default(false)
+  moderatedAt     DateTime?
+  moderatedBy     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent       Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies      Comment[]     @relation("CommentReplies")
+  commentVotes CommentVote[]
+
+  @@map("comments")
 }
 
 model Vote {
@@ -56,6 +82,19 @@ model Vote {
 
   @@unique([postId, userId])
   @@map("votes")
+}
+
+model CommentVote {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String?  // IP hash for anonymous users
+  type      String   // "UPVOTE" or "DOWNVOTE"
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@map("comment_votes")
 }
 
 model AdminUser {

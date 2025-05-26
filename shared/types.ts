@@ -15,6 +15,25 @@ export interface Post {
   isModerated: boolean;
   moderatedAt?: Date;
   moderatedBy?: string;
+  commentCount?: number; // Number of comments on this post
+}
+
+export interface Comment {
+  id: string;
+  postId: string;
+  content: string;
+  authorId?: string; // Optional for anonymous comments
+  authorNickname?: string; // Anonymous nickname
+  createdAt: Date;
+  updatedAt: Date;
+  upvotes: number;
+  downvotes: number;
+  score: number; // Calculated field for sorting
+  isModerated: boolean;
+  moderatedAt?: Date;
+  moderatedBy?: string;
+  parentId?: string; // For nested replies (optional for future)
+  replies?: Comment[]; // Nested replies (optional for future)
 }
 
 export interface Topic {
@@ -36,6 +55,14 @@ export interface Vote {
   createdAt: Date;
 }
 
+export interface CommentVote {
+  id: string;
+  commentId: string;
+  userId?: string; // For anonymous, this might be IP-based hash
+  type: "upvote" | "downvote";
+  createdAt: Date;
+}
+
 export interface AdminUser {
   id: string;
   username: string;
@@ -50,6 +77,13 @@ export interface CreatePostRequest {
   content: string;
   topicId: string;
   authorNickname?: string;
+}
+
+export interface CreateCommentRequest {
+  content: string;
+  postId: string;
+  authorNickname?: string;
+  parentId?: string; // For nested replies (optional for future)
 }
 
 export interface CreateTopicRequest {
@@ -70,6 +104,14 @@ export interface PostsResponse {
   hasMore: boolean;
 }
 
+export interface CommentsResponse {
+  comments: Comment[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}
+
 export interface TopicsResponse {
   topics: Topic[];
 }
@@ -81,6 +123,14 @@ export interface PostsQuery {
   sortBy?: "newest" | "trending" | "oldest";
   topicId?: string;
   search?: string;
+}
+
+// Query parameters for comments
+export interface CommentsQuery {
+  page?: number;
+  limit?: number;
+  sortBy?: "newest" | "trending" | "oldest";
+  postId: string;
 }
 
 // Error response
@@ -97,6 +147,12 @@ export type FeedType = "chronological" | "trending";
 export interface PostFormData {
   content: string;
   topicId: string;
+  authorNickname: string;
+}
+
+// Comment creation form data
+export interface CommentFormData {
+  content: string;
   authorNickname: string;
 }
 

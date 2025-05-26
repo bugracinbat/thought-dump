@@ -13,6 +13,12 @@ const createPostSchema = z.object({
   authorNickname: z.string().optional(),
 });
 
+const createCommentSchema = z.object({
+  content: z.string().min(1).max(2000),
+  authorNickname: z.string().optional(),
+  parentId: z.string().optional(),
+});
+
 const voteSchema = z.object({
   type: z.enum(["upvote", "downvote"]),
 });
@@ -88,7 +94,10 @@ router.get("/", async (req, res, next) => {
         include: {
           topic: true,
           _count: {
-            select: { votes: true },
+            select: {
+              votes: true,
+              comments: true,
+            },
           },
         },
         orderBy,
@@ -98,8 +107,14 @@ router.get("/", async (req, res, next) => {
       prisma.post.count({ where }),
     ]);
 
+    // Map the response to include commentCount
+    const postsWithCommentCount = posts.map((post) => ({
+      ...post,
+      commentCount: post._count.comments,
+    }));
+
     res.json({
-      posts,
+      posts: postsWithCommentCount,
       total,
       page,
       limit,
@@ -268,7 +283,10 @@ router.get("/:id", async (req, res, next) => {
       include: {
         topic: true,
         _count: {
-          select: { votes: true },
+          select: {
+            votes: true,
+            comments: true,
+          },
         },
       },
     });
@@ -280,7 +298,115 @@ router.get("/:id", async (req, res, next) => {
       throw error;
     }
 
-    res.json(post);
+    // Map the response to include commentCount
+    const postWithCommentCount = {
+      ...post,
+      commentCount: post._count.comments,
+    };
+
+    res.json(postWithCommentCount);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/posts/:id/comments - Get comments for a post
+router.get("/:id/comments", async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
+    const sortBy = (req.query.sortBy as string) || "newest";
+
+    const skip = (page - 1) * limit;
+
+    // Check if post exists
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      const error = new Error("Post not found") as AppError;
+      error.statusCode = 404;
+      error.code = "POST_NOT_FOUND";
+      throw error;
+    }
+
+    // Build order clause
+    let orderBy: any;
+    switch (sortBy) {
+      case "trending":
+        orderBy = { score: "desc" };
+        break;
+      case "oldest":
+        orderBy = { createdAt: "asc" };
+        break;
+      default: // newest
+        orderBy = { createdAt: "desc" };
+    }
+
+    const where = {
+      postId,
+      isModerated: false, // Don't show moderated comments
+    };
+
+    const [comments, total] = await Promise.all([
+      prisma.comment.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      prisma.comment.count({ where }),
+    ]);
+
+    res.json({
+      comments,
+      total,
+      page,
+      limit,
+      hasMore: skip + limit < total,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/posts/:id/comments - Create a comment on a post
+router.post("/:id/comments", async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const validatedData = createCommentSchema.parse(req.body);
+
+    // Check if post exists
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      const error = new Error("Post not found") as AppError;
+      error.statusCode = 404;
+      error.code = "POST_NOT_FOUND";
+      throw error;
+    }
+
+    // Create comment
+    const comment = await prisma.comment.create({
+      data: {
+        content: validatedData.content,
+        postId,
+        authorNickname: validatedData.authorNickname || "Anonymous",
+        parentId: validatedData.parentId,
+      },
+    });
+
+    // Update post comment count
+    await prisma.post.update({
+      where: { id: postId },
+      data: { commentCount: { increment: 1 } },
+    });
+
+    res.status(201).json(comment);
   } catch (error) {
     next(error);
   }

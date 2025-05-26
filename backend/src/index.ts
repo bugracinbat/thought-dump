@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client";
 import { postsRouter } from "./routes/posts";
 import { topicsRouter } from "./routes/topics";
 import { adminRouter } from "./routes/admin";
+import { commentsRouter } from "./routes/comments";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 
@@ -55,6 +56,7 @@ app.get("/health", (req, res) => {
 app.use("/api/posts", postsRouter);
 app.use("/api/topics", topicsRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/comments", commentsRouter);
 
 // 404 handler
 app.use("*", (req, res) => {

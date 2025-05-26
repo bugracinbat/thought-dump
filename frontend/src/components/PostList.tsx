@@ -3,13 +3,15 @@ import { ChevronUp, ChevronDown, MessageSquare, Hash } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Post } from "@/types";
 import { useStore } from "../store/useStore";
+import { Comments } from "./Comments";
 
 interface PostListProps {
   posts: Post[];
 }
 
 export function PostList({ posts }: PostListProps) {
-  const { updatePostVotes, feedType } = useStore();
+  const { updatePostVotes, feedType, showComments, toggleComments } =
+    useStore();
 
   const handleVote = async (postId: string, type: "upvote" | "downvote") => {
     try {
@@ -54,84 +56,101 @@ export function PostList({ posts }: PostListProps) {
   return (
     <div key={feedType} className="space-y-6 fade-in">
       {posts.map((post, index) => (
-        <article
-          key={post.id}
-          className="post-card p-6 slide-up"
-          style={{ animationDelay: `${index * 0.05}s` }}
-        >
-          <div className="flex space-x-6">
-            {/* Vote buttons */}
-            <div className="flex flex-col items-center space-y-2">
-              <button
-                onClick={() => handleVote(post.id, "upvote")}
-                className="vote-btn upvote group"
-                title="Upvote"
-              >
-                <ChevronUp className="h-5 w-5 transition-transform group-hover:scale-110" />
-              </button>
+        <div key={post.id} className="space-y-4">
+          <article
+            className="post-card p-6 slide-up"
+            style={{ animationDelay: `${index * 0.05}s` }}
+          >
+            <div className="flex space-x-6">
+              {/* Vote buttons */}
+              <div className="flex flex-col items-center space-y-2">
+                <button
+                  onClick={() => handleVote(post.id, "upvote")}
+                  className="vote-btn upvote group"
+                  title="Upvote"
+                >
+                  <ChevronUp className="h-5 w-5 transition-transform group-hover:scale-110" />
+                </button>
 
-              <div className="text-center">
-                <span className="text-lg font-bold text-accent-600">
-                  {post.upvotes - post.downvotes}
-                </span>
-                <div className="text-xs text-primary-500">votes</div>
-              </div>
-
-              <button
-                onClick={() => handleVote(post.id, "downvote")}
-                className="vote-btn downvote group"
-                title="Downvote"
-              >
-                <ChevronDown className="h-5 w-5 transition-transform group-hover:scale-110" />
-              </button>
-            </div>
-
-            {/* Post content */}
-            <div className="flex-1 min-w-0">
-              {/* Post metadata */}
-              <div className="flex items-center flex-wrap gap-3 text-sm text-primary-500 mb-4">
-                <Link to={`/topics/${post.topic?.slug}`} className="topic-tag">
-                  <Hash className="h-3 w-3 mr-1" />
-                  {post.topic?.name}
-                </Link>
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium text-primary-600">
-                    {post.authorNickname || "Anonymous"}
+                <div className="text-center">
+                  <span className="text-lg font-bold text-accent-600">
+                    {post.upvotes - post.downvotes}
                   </span>
-                  <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-                  <span>
-                    {formatDistanceToNow(new Date(post.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </span>
+                  <div className="text-xs text-primary-500">votes</div>
                 </div>
+
+                <button
+                  onClick={() => handleVote(post.id, "downvote")}
+                  className="vote-btn downvote group"
+                  title="Downvote"
+                >
+                  <ChevronDown className="h-5 w-5 transition-transform group-hover:scale-110" />
+                </button>
               </div>
 
               {/* Post content */}
-              <div className="prose prose-primary max-w-none">
-                <p className="text-primary-800 leading-relaxed whitespace-pre-wrap text-base">
-                  {post.content}
-                </p>
-              </div>
+              <div className="flex-1 min-w-0">
+                {/* Post metadata */}
+                <div className="flex items-center flex-wrap gap-3 text-sm text-primary-500 mb-4">
+                  <Link
+                    to={`/topics/${post.topic?.slug}`}
+                    className="topic-tag"
+                  >
+                    <Hash className="h-3 w-3 mr-1" />
+                    {post.topic?.name}
+                  </Link>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium text-primary-600">
+                      {post.authorNickname || "Anonymous"}
+                    </span>
+                    <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
+                    <span>
+                      {formatDistanceToNow(new Date(post.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </span>
+                  </div>
+                </div>
 
-              {/* Post stats */}
-              <div className="flex items-center space-x-6 mt-4 pt-4 border-t border-border-primary/30">
-                <div className="flex items-center space-x-2 text-sm text-primary-500">
-                  <ChevronUp className="h-4 w-4 text-green-500" />
-                  <span>{post.upvotes} upvotes</span>
+                {/* Post content */}
+                <div className="prose prose-primary max-w-none">
+                  <p className="text-primary-800 leading-relaxed whitespace-pre-wrap text-base">
+                    {post.content}
+                  </p>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-primary-500">
-                  <ChevronDown className="h-4 w-4 text-red-500" />
-                  <span>{post.downvotes} downvotes</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-primary-500">
-                  <MessageSquare className="h-4 w-4" />
-                  <span>Discussion</span>
+
+                {/* Post stats */}
+                <div className="flex items-center space-x-6 mt-4 pt-4 border-t border-border-primary/30">
+                  <div className="flex items-center space-x-2 text-sm text-primary-500">
+                    <ChevronUp className="h-4 w-4 text-green-500" />
+                    <span>{post.upvotes} upvotes</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-primary-500">
+                    <ChevronDown className="h-4 w-4 text-red-500" />
+                    <span>{post.downvotes} downvotes</span>
+                  </div>
+                  <button
+                    onClick={() => toggleComments(post.id)}
+                    className="flex items-center space-x-2 text-sm text-primary-500 hover:text-accent-600 transition-colors"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    <span>
+                      {post.commentCount || 0}{" "}
+                      {(post.commentCount || 0) === 1 ? "comment" : "comments"}
+                    </span>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </article>
+          </article>
+
+          {/* Comments Section */}
+          {showComments[post.id] && (
+            <div className="ml-12 slide-up">
+              <Comments postId={post.id} />
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
