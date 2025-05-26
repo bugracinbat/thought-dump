@@ -1,0 +1,72 @@
+// Prisma schema for Thought Dump
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Topic {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  postCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  posts Post[]
+
+  @@map("topics")
+}
+
+model Post {
+  id              String    @id @default(cuid())
+  content         String
+  authorNickname  String?   // Anonymous nickname
+  authorId        String?   // Optional for registered users
+  topicId         String
+  upvotes         Int       @default(0)
+  downvotes       Int       @default(0)
+  score           Float     @default(0) // Calculated score for trending
+  isModerated     Boolean   @default(false)
+  moderatedAt     DateTime?
+  moderatedBy     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  votes Vote[]
+
+  @@map("posts")
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String?  // IP hash for anonymous users
+  type      String   // "UPVOTE" or "DOWNVOTE"
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@map("votes")
+}
+
+model AdminUser {
+  id        String    @id @default(cuid())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  role      String    @default("MODERATOR") // "ADMIN" or "MODERATOR"
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("admin_users")
+} 
